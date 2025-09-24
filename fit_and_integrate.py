@@ -2,7 +2,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import quad
 from scipy.optimize import curve_fit
+from scipy.signal import find_peaks
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 
+
+
+"""
 def peak_one(col_num):
     first_peak_data = 'VO2 TiOx high R negative -4mV in vapor-Ti peak 1.txt'
     number_data_peak_1 = []
@@ -29,8 +36,9 @@ def peak_one(col_num):
             refined_peak_1_data.append(pair_list[col_num])
 
     return refined_peak_1_data
+"""
 
-
+"""
 def peak_two(col_num):
     second_peak_data = 'VO2 TiOx high R negative -4mV in vapor-Ti peak 2.txt'  # Adjust file name as necessary
     number_data_peak_2 = []
@@ -58,7 +66,7 @@ def peak_two(col_num):
 
 
     return refined_peak_2_data
-
+"""
 
 def custom_cubic_function(x, a, b, c, d):
     # Define a custom cubic function
@@ -120,14 +128,14 @@ integrated_areas_peak_two = []
 ratio_list_areas = []
 
 # Input how many datasets you have in total
-for col_num in range(380):
+for col_num in range(440):
     # Example usage:
     # Load data from peak_one for current column
     data1 = peak_one(col_num)
 
     if data1:  # Check if data1 is not empty
         # Unpack the data for plotting
-        x_data1, y_data1 = zip(*data1)
+        x_data1, y_data1 = data1
 
         # Fit the cubic function to the data
         popt1, _ = curve_fit(custom_cubic_function, x_data1, y_data1)
