@@ -7,8 +7,8 @@ from scipy.optimize import curve_fit
 import math_functions
 import plotly.express as px
 
-df1 = pd.read_excel("EELS analysis before biasing.xlsx", header = 0)
-df2 = pd.read_excel("DANIEL BEFORE BIASING.xlsx", header = 0)
+df1 = pd.read_excel("before biasing.xlsx", header = 0)
+df2 = pd.read_excel("before biaising daniel.xlsx", header = 0)
 df = pd.concat([df1, df2], axis = 1)
 
 
@@ -30,25 +30,38 @@ integral_ratio_list = []
 for key in dfy:
     x0 = np.array(first_peaks_x[key])
     y0 = np.array(first_peaks_y[key])
-
     # Shift x0 to have the peak at the origin
     x0 = x0 - x0.mean()
 
-    # Numerically integrate the peak
-    integral_peak1 = np.trapz(y = y0, x = x0)
-
     x1 = np.array(second_peaks_x[key])
     y1 = np.array(second_peaks_y[key])
-
     x1 = x1 - x1.mean()
 
-    integral_peak2 = np.trapz(y=y1, x = x1)
+    #Fit the two peaks use curvefit
+    popt0, _ = curve_fit(math_functions.sextic, x0, y0)
+    popt1, _ = curve_fit(math_functions.sextic, x1, y1)
 
-    integral_ratio_list.append(integral_peak2/integral_peak1)
+    x0fit = np.linspace(np.nanmin(x0), np.nanmax(x0), 6000)
+    y0fit = math_functions.sextic(x0fit, *popt0)
+    x1fit = np.linspace(np.nanmin(x1), np.nanmax(x1), 6000)
+    y1fit = math_functions.sextic(x1fit, *popt1)
 
+    integral1 = np.trapz(y = y0fit, x= x0fit)
+    integral2 = np.trapz(y = y1fit, x = x1fit)
+
+
+
+
+    integral_ratio_list.append(integral2/integral1)
+
+
+
+
+"""
+Mapping the integral ratio list
+"""
 color = ['RdBu_r']
-#num_range = [min(integral_ratio_list), max(integral_ratio_list)]
-num_range = [1.32, 1.475]
+num_range = [min(integral_ratio_list), max(integral_ratio_list)]
 nested_ratio_list = [integral_ratio_list[i:i + 40] for i in range(0, len(integral_ratio_list), 40)]
 fig = px.imshow(nested_ratio_list, text_auto=False, origin='upper', color_continuous_scale=color[0], zmin= num_range[0], zmax= num_range[1],  title= 'EELS Before Biasing')
 fig.update_xaxes(showticklabels=False)
