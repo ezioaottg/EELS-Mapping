@@ -6,4 +6,4 @@ def column_labels():
           for letter in (chr(c) for c in range(ord('A'), ord('V') + 1))
           for num in range(1, 41)]
 
-    return
+    return labels
