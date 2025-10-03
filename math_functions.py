@@ -26,14 +26,11 @@ def numerically_integrate(x_data: np.ndarray,
     integral = np.trapz(y = y_data, x=x_data)
     return integral
 
-def integrate_fit(x_data: np.ndarray,
-                  y_data: np.ndarray,
-                  fitted_function: Callable[[int], int],
-                  params: list | np.ndarray,
-                  linspace_num: int = 50):
+
+
+
     
-    x_values = np.linspace(np.nanmin(x_data), np.nanmax(x_data), linspace_num)
-    y_values = fitted_function(x_values, *params)
+
 
 
     

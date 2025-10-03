@@ -1,11 +1,13 @@
 import numpy as np
 import find_peaks
 import pandas as pd
-from util import column_labels
+from util import column_labels, center_axis, fit_and_integrate
 import matplotlib.pyplot as plt
-from scipy.optimize import curve_fit
+from scipy.optismize import curve_fit
 import math_functions
 import plotly.express as px
+from scipy.integrate import quad
+from typing import Callable
 
 df1 = pd.read_excel("before biasing.xlsx", header = 0)
 df2 = pd.read_excel("before biaising daniel.xlsx", header = 0)
@@ -30,29 +32,13 @@ integral_ratio_list = []
 for key in dfy:
     x0 = np.array(first_peaks_x[key])
     y0 = np.array(first_peaks_y[key])
-    # Shift x0 to have the peak at the origin
-    x0 = x0 - x0.mean()
 
     x1 = np.array(second_peaks_x[key])
     y1 = np.array(second_peaks_y[key])
-    x1 = x1 - x1.mean()
 
-    #Fit the two peaks use curvefit
-    popt0, _ = curve_fit(math_functions.sextic, x0, y0)
-    popt1, _ = curve_fit(math_functions.sextic, x1, y1)
-
-    x0fit = np.linspace(np.nanmin(x0), np.nanmax(x0), 6000)
-    y0fit = math_functions.sextic(x0fit, *popt0)
-    x1fit = np.linspace(np.nanmin(x1), np.nanmax(x1), 6000)
-    y1fit = math_functions.sextic(x1fit, *popt1)
-
-    integral1 = np.trapz(y = y0fit, x= x0fit)
-    integral2 = np.trapz(y = y1fit, x = x1fit)
-
-
-
-
-    integral_ratio_list.append(integral2/integral1)
+    integral0 = fit_and_integrate(x0, y0, math_functions.sextic, 0.5, 1000)
+    integral1 = fit_and_integrate(x1,y1, math_functions.sextic, 0.5, 1000)
+    integral_ratio_list.append(integral1/integral0)
 
 
 
@@ -61,7 +47,7 @@ for key in dfy:
 Mapping the integral ratio list
 """
 color = ['RdBu_r']
-num_range = [min(integral_ratio_list), max(integral_ratio_list)]
+num_range = [1.185, 1.485]
 nested_ratio_list = [integral_ratio_list[i:i + 40] for i in range(0, len(integral_ratio_list), 40)]
 fig = px.imshow(nested_ratio_list, text_auto=False, origin='upper', color_continuous_scale=color[0], zmin= num_range[0], zmax= num_range[1],  title= 'EELS Before Biasing')
 fig.update_xaxes(showticklabels=False)

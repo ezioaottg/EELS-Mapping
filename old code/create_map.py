@@ -10,8 +10,8 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 
 
-df1 = pd.read_excel("EELS analysis before biasing.xlsx", header = 0)
-df2 = pd.read_excel("DANIEL BEFORE BIASING.xlsx", header = 0)
+df1 = pd.read_excel("before biasing.xlsx", header = 0)
+df2 = pd.read_excel("before biaising daniel.xlsx", header = 0)
 
 df = pd.concat([df1, df2], axis = 1)
 
@@ -79,8 +79,8 @@ def peak_two(col_num):
 
 
     lower_peak = peaks_list[col_key][1]
-    lower_range = lower_peak - 11
-    upper_range = lower_peak + 11
+    lower_range = lower_peak - 8
+    upper_range = lower_peak + 8
     
     y = np.array(df_without_ev[col_key][lower_range:upper_range])
     x = np.array(df["eV"][lower_range:upper_range])
@@ -226,9 +226,10 @@ before_bias = ratio_list_areas
 
 
 color = ['RdBu_r']
-num_range = [1.32, 1.475]
+num_range = [min(ratio_list_areas), max(ratio_list_areas)]
 nested_before_bias = [before_bias[i:i + 40] for i in range(0, len(before_bias), 40)]
 fig = px.imshow(nested_before_bias, text_auto=False, origin='upper', color_continuous_scale=color[0], zmin= num_range[0], zmax= num_range[1],  title= 'EELS Before Biasing')
 fig.update_xaxes(showticklabels=False)
 fig.update_yaxes(showticklabels=False)
 fig.show()
+
